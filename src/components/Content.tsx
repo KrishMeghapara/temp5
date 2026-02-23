@@ -179,7 +179,9 @@ dotnet ef database update`}</pre>
               issuer, audience, lifetime, and signing key integrity for robust security.
             </p>
             <div className="code-block">
-              <pre>{`builder.Services.AddAuthentication("Bearer")
+              <pre>{`var jwtSettings = builder.Configuration.GetSection("Jwt");
+                     var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+              builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
