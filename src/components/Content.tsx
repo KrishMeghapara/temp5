@@ -465,6 +465,53 @@ public IActionResult GetById(int id)
          expires: DateTime.UtcNow.AddHours(1),
          signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
      );
+
+     //SignUp
+     var existingUser = await _context.Users
+        .AnyAsync(u => u.UserName == dto.UserName);
+
+    if (existingUser)
+    {
+        return BadRequest(new
+        {
+            error = true,
+            message = "Username already exists"
+        });
+    }
+
+    var carWashExists = await _context.CarWashes
+        .AnyAsync(c => c.CarWashID == dto.CarWashID);
+
+    if (!carWashExists)
+    {
+        return BadRequest(new
+        {
+            error = true,
+            message = "Invalid CarWashID"
+        });
+    }
+
+  
+    var passwordHash = Convert.ToBase64String(
+        SHA256.HashData(Encoding.UTF8.GetBytes(dto.Password)));
+
+    
+    var user = new Users
+    {
+        UserName = dto.UserName,
+        Password = passwordHash,
+        UserRole = dto.UserRole,
+        CarWashID = dto.CarWashID
+    };
+
+    _context.Users.Add(user);
+    await _context.SaveChangesAsync();
+
+    return Ok(new
+    {
+        error = false,
+        message = "User registered successfully"
+    });
 `}</pre>
             </div>
             <h3>Supported Operations</h3>
