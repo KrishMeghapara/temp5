@@ -160,15 +160,12 @@ dotnet ef database update`}</pre>
 }`}</pre>
             </div>
 
-              <h2>
-                Add this to Program.cs 
-              </h2>
+              <h3>
+                Program.cs 
+              </h3>
              <div className="code-block">
               <pre>{`
-              
-              builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
-
-              
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
               `}</pre>
             </div>
 
