@@ -189,10 +189,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
               issuer, audience, lifetime, and signing key integrity for robust security.
             </p>
             <div className="code-block">
-              <pre>{`var jwtSettings = builder.Configuration.GetSection("Jwt");
+           <pre>{`var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
-    builder.Services.AddAuthentication("Bearer")
+builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -200,7 +200,29 @@ var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
-            ValidateIssuerSigningKey = true
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = async context =>
+            {
+                context.HandleResponse();
+
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+
+                var result = JsonSerializer.Serialize(new
+                {
+                    error = true,
+                    message = "Invalid or expired token"
+                });
+
+                await context.Response.WriteAsync(result);
+            }
         };
     });
 
