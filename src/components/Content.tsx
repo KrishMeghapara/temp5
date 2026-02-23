@@ -193,8 +193,9 @@ dotnet ef database update`}</pre>
             </p>
             <div className="code-block">
               <pre>{`var jwtSettings = builder.Configuration.GetSection("Jwt");
-                     var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
-              builder.Services.AddAuthentication("Bearer")
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+
+    builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
