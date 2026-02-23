@@ -440,7 +440,32 @@ public IActionResult GetById(int id)
         Message = "Product retrieved successfully",
         Data = product
     });
-}`}</pre>
+}
+
+ //Login 
+    var dbUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == loginDto.UserName && u.PasswordHash == loginDto.PasswordHash );
+
+    if (dbUser == null)
+    {
+        return Unauthorized("Invalid username or password.");
+    }
+
+     var claims = new[]
+     {
+         new Claim(ClaimTypes.Name, dbUser.UserName),
+         new Claim(ClaimTypes.Role, dbUser.UserRole)
+     };
+
+     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+
+     var token = new JwtSecurityToken(
+         issuer: _configuration["Jwt:Issuer"],
+         audience: _configuration["Jwt:Audience"],
+         claims: claims,
+         expires: DateTime.UtcNow.AddHours(1),
+         signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+     );
+`}</pre>
             </div>
             <h3>Supported Operations</h3>
             <ul>
