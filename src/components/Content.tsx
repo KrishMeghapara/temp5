@@ -159,6 +159,19 @@ dotnet ef database update`}</pre>
     public DbSet<Product> Products { get; set; }
 }`}</pre>
             </div>
+
+              <h2>
+                Add this to Program.cs 
+              </h2>
+             <div className="code-block">
+              <pre>{`
+              
+              builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
+
+              
+              `}</pre>
+            </div>
+
             <h3>Configuration Features</h3>
             <ul>
               <li>Entity Framework Core for ORM capabilities</li>
